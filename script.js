@@ -156,8 +156,8 @@ function handleMotion(event) {
     if (Math.abs(accelerationX) > 2 || Math.abs(accelerationY) > 2) {
         if (accelerationY < -2) moveBall("up");
         if (accelerationY > 2) moveBall("down");
-        if (accelerationX < -2) moveBall("left");
-        if (accelerationX > 2) moveBall("right");
+        if (accelerationX < -2) moveBall("right");
+        if (accelerationX > 2) moveBall("left");
     }
 }
 
