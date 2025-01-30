@@ -36,7 +36,7 @@ let grid = [];
 let stack = [];
 let current;
 let goal = { x: cols - 1, y: rows - 1 }; // Objetivo no centro
-let ball = { x: 0, y: 0, radius: 0, targetX: 0, targetY: 0, speed: 0.05 };
+let ball = { x: 0, y: 0, radius: 0, targetX: 0, targetY: 0, speed: 0.1 };
 
 function resizeCanvas() {
     canvas.width = window.innerWidth * 0.9;
@@ -174,11 +174,12 @@ function moveBall(direction) {
         ball.y = newY;
     }
 
-    if (ball.x === goal.x && ball.y === goal.y) {
-    
-        location.reload();
-    }
-}
+     // Verificar se a bolinha está perto do objetivo (tolerância de 0.2 para o mobile)
+     let distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 2) + Math.pow(ball.y - goal.y, 2));
+     if (distanceToGoal < 0.2) {  // Tolerância para a proximidade
+         location.reload();  // Reiniciar o jogo
+     }
+ }
 
 // Controle por sensor de movimento (Mobile)
 function handleMotion(event) {
@@ -187,17 +188,13 @@ function handleMotion(event) {
 
     if (Math.abs(accelerationX) > 0.1 || Math.abs(accelerationY) > 0.1) {
         
-        if (accelerationY < -2) moveBall("up");
-        if (accelerationY > 2) moveBall("down");
-        if (accelerationX < -2) moveBall("right");
-        if (accelerationX > 2) moveBall("left");
+        if (accelerationY < -1) moveBall("up");
+        if (accelerationY > 1) moveBall("down");
+        if (accelerationX < -1) moveBall("right");
+        if (accelerationX > 1) moveBall("left");
     }
-     // Verificar se a bolinha chegou perto o suficiente do objetivo
-     const distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 2) + Math.pow(ball.y - goal.y, 2));
-     if (distanceToGoal < 0.5) { // Ajuste esse valor conforme a necessidade
-         location.reload(); // Reinicia o jogo
-     }
- }
+    
+}
 
 // Loop principal
 function gameLoop() {
