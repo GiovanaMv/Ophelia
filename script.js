@@ -186,12 +186,14 @@ function handleMotion(event) {
     let accelerationY = event.accelerationIncludingGravity.y;
 
     if (Math.abs(accelerationX) > 1 || Math.abs(accelerationY) > 1) {
-        if (accelerationY < -2) moveBall("up");
-        if (accelerationY > 2) moveBall("down");
-        if (accelerationX < -2) moveBall("right");
-        if (accelerationX > 2) moveBall("left");
+        let moveX = Math.round(accelerationX * 0.1); // Reduzindo a intensidade do movimento
+        let moveY = Math.round(accelerationY * 0.1); // Para que o movimento não seja muito brusco
+
+        if (moveY < -1) moveBall("up");
+        if (moveY > 1) moveBall("down");
+        if (moveX < -1) moveBall("left");
+        if (moveX > 1) moveBall("right");
     }
-    
 }
 
 // Loop principal
