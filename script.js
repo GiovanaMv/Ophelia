@@ -185,12 +185,13 @@ function handleMotion(event) {
     let accelerationX = event.accelerationIncludingGravity.x;
     let accelerationY = event.accelerationIncludingGravity.y;
 
-    if (Math.abs(accelerationX) > 2 || Math.abs(accelerationY) > 2) {
+    if (Math.abs(accelerationX) > 1 || Math.abs(accelerationY) > 1) {
         if (accelerationY < -2) moveBall("up");
         if (accelerationY > 2) moveBall("down");
         if (accelerationX < -2) moveBall("right");
         if (accelerationX > 2) moveBall("left");
     }
+    
 }
 
 // Loop principal
