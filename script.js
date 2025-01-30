@@ -169,28 +169,17 @@ function moveBall(direction) {
     let currentCell = grid.find(c => c.x === ball.x && c.y === ball.y);
     let targetCell = grid.find(c => c.x === newX && c.y === newY);
 
-    // Lógica de movimento com base na aceleração (Mobile)
-    if (direction === "up" || direction === "down" || direction === "left" || direction === "right") {
-    // A aceleração de X e Y podem influenciar a velocidade da bolinha
-    let accelerationX = ball.targetX;  // Aqui você pode acessar a aceleração
-    let accelerationY = ball.targetY;
-
-    // Ajustando a velocidade da bolinha com base na aceleração
-    let speedMultiplier = Math.sqrt(accelerationX * accelerationX + accelerationY * accelerationY);  // Multiplicando a aceleração
-    speedMultiplier = Math.min(speedMultiplier, 5);  // Limitando a velocidade máxima
-
-    // Aplica o cálculo de aceleração para mover a bolinha mais rápido ou devagar
     if (targetCell && !currentCell.walls[directions.findIndex(d => d.x === (newX - ball.x) && d.y === (newY - ball.y))]) {
-        ball.x += (newX - ball.x) * speedMultiplier * 0.1; // Multiplica com a aceleração
-        ball.y += (newY - ball.y) * speedMultiplier * 0.1; // Multiplica com a aceleração
+        ball.x = newX;
+        ball.y = newY;
     }
-}
-// Verificar se a bolinha está perto do objetivo
-let distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 2) + Math.pow(ball.y - goal.y, 2));
-if (distanceToGoal < 0.2) {  // Tolerância para a proximidade
-    location.reload();  // Reiniciar o jogo
-}
-}
+
+     // Verificar se a bolinha está perto do objetivo (tolerância de 0.2 para o mobile)
+     let distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 2) + Math.pow(ball.y - goal.y, 2));
+     if (distanceToGoal < 0.2) {  // Tolerância para a proximidade
+         location.reload();  // Reiniciar o jogo
+     }
+ }
 
 // Controle por sensor de movimento (Mobile)
 function handleMotion(event) {
