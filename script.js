@@ -185,15 +185,19 @@ function handleMotion(event) {
     let accelerationX = event.accelerationIncludingGravity.x;
     let accelerationY = event.accelerationIncludingGravity.y;
 
-    if (Math.abs(accelerationX) > 1 || Math.abs(accelerationY) > 1) {
+    if (Math.abs(accelerationX) > 0.1 || Math.abs(accelerationY) > 0.1) {
         
-        if (accelerationY < -1) moveBall("up");
-        if (accelerationY > 1) moveBall("down");
-        if (accelerationX < -1) moveBall("right");
-        if (accelerationX > 1) moveBall("left");
+        if (accelerationY < -2) moveBall("up");
+        if (accelerationY > 2) moveBall("down");
+        if (accelerationX < -2) moveBall("right");
+        if (accelerationX > 2) moveBall("left");
     }
-    
-}
+     // Verificar se a bolinha chegou perto o suficiente do objetivo
+     const distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 2) + Math.pow(ball.y - goal.y, 2));
+     if (distanceToGoal < 0.5) { // Ajuste esse valor conforme a necessidade
+         location.reload(); // Reinicia o jogo
+     }
+ }
 
 // Loop principal
 function gameLoop() {
