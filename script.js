@@ -1,19 +1,52 @@
 const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
 
-canvas.width = 500;
-canvas.height = 500;
+document.body.style.margin = "0";
+document.body.style.overflow = "hidden";
+document.body.style.display = "flex";
+document.body.style.justifyContent = "center";
+document.body.style.alignItems = "center";
+document.body.style.height = "100vh";
+document.body.style.background = "radial-gradient(circle,rgb(127, 255, 68),rgb(255, 1, 255),rgb(45, 194, 253))";
+document.body.style.animation = "gradientAnimation 10s infinite linear alternate";
+
+document.head.insertAdjacentHTML("beforeend", `
+<style>
+    @keyframes gradientAnimation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    body {
+        background-size: 300% 300%;
+    }
+    canvas {
+        border-radius: 10px;
+    }
+</style>
+`);
+
+const ctx = canvas.getContext("2d");
 
 const cols = 15;
 const rows = 15;
-const cellSize = canvas.width / cols;
+let cellSize;
 
 // Estrutura do labirinto
 let grid = [];
 let stack = [];
 let current;
 let goal = { x: cols - 1, y: rows - 1 }; // Objetivo no centro
-let ball = { x: 0, y: 0, radius: cellSize / 4 };
+let ball = { x: 0, y: 0, radius: 0, targetX: 0, targetY: 0, speed: 0.1 };
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth * 0.9;
+    canvas.height = window.innerHeight * 0.9;
+    cellSize = Math.min(canvas.width / cols, canvas.height / rows);
+    ball.radius = cellSize / 4;
+}
+window.addEventListener("resize", resizeCanvas);
+window.addEventListener("load", resizeCanvas);
+resizeCanvas();
 
 // Direções possíveis
 const directions = [
@@ -34,7 +67,7 @@ class Cell {
     draw() {
         let x = this.x * cellSize;
         let y = this.y * cellSize;
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = "white";
         ctx.lineWidth = 2;
 
         if (this.walls[0]) drawLine(x, y, x + cellSize, y); // Topo
@@ -54,6 +87,7 @@ function drawLine(x1, y1, x2, y2) {
 
 // Inicializar o labirinto
 function setupMaze() {
+    grid = [];
     for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
             grid.push(new Cell(x, y));
@@ -98,7 +132,6 @@ function generateMaze() {
 // Desenhar o labirinto e a bolinha
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
     grid.forEach(cell => cell.draw());
 
     // Desenhar objetivo
@@ -113,7 +146,6 @@ function draw() {
     ctx.arc(ball.x * cellSize + cellSize / 2, ball.y * cellSize + cellSize / 2, ball.radius, 0, Math.PI * 2);
     ctx.fill();
 }
-
 // Movimento da bolinha pelo teclado (Desktop)
 document.addEventListener("keydown", (event) => {
     moveBall(event.key);
@@ -143,7 +175,7 @@ function moveBall(direction) {
     }
 
     if (ball.x === goal.x && ball.y === goal.y) {
-        alert("Você venceu!");
+        
         location.reload();
     }
 }
