@@ -36,7 +36,7 @@ let grid = [];
 let stack = [];
 let current;
 let goal = { x: cols - 1, y: rows - 1 }; // Objetivo no centro
-let ball = { x: 0, y: 0, radius: 0, targetX: 0, targetY: 0, speed: 0.1 };
+let ball = { x: 0, y: 0, radius: 0, targetX: 0, targetY: 0, speed: 0.05 };
 
 function resizeCanvas() {
     canvas.width = window.innerWidth * 0.9;
@@ -175,7 +175,7 @@ function moveBall(direction) {
     }
 
     if (ball.x === goal.x && ball.y === goal.y) {
-        
+    
         location.reload();
     }
 }
