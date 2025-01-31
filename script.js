@@ -151,8 +151,8 @@ function moveBall(direction) {
     let newY = ball.y;
     if (direction === "ArrowUp" || direction === "up") newY--;
     if (direction === "ArrowDown" || direction === "down") newY++;
-    if (direction === "ArrowLeft" || direction === "left") newX--;
-    if (direction === "ArrowRight" || direction === "right") newX++;
+    if (direction === "ArrowLeft" || direction === "right") newX--;
+    if (direction === "ArrowRight" || direction === "left") newX++;
     let currentCell = grid.find(c => c.x === ball.x && c.y === ball.y);
     let targetCell = grid.find(c => c.x === newX && c.y === newY);
     if (targetCell && !currentCell.walls[directions.findIndex(d => d.x === (newX - ball.x) && d.y === (newY - ball.y))]) {
