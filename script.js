@@ -1,52 +1,19 @@
 const canvas = document.getElementById("gameCanvas");
-
-document.body.style.margin = "0";
-document.body.style.overflow = "hidden";
-document.body.style.display = "flex";
-document.body.style.justifyContent = "center";
-document.body.style.alignItems = "center";
-document.body.style.height = "100vh";
-document.body.style.background = "radial-gradient(circle,rgb(127, 255, 68),rgb(255, 1, 255),rgb(45, 194, 253))";
-document.body.style.animation = "gradientAnimation 10s infinite linear alternate";
-
-document.head.insertAdjacentHTML("beforeend", `
-<style>
-    @keyframes gradientAnimation {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    body {
-        background-size: 300% 300%;
-    }
-    canvas {
-        border-radius: 10px;
-    }
-</style>
-`);
-
 const ctx = canvas.getContext("2d");
+
+canvas.width = 500;
+canvas.height = 500;
 
 const cols = 15;
 const rows = 15;
-let cellSize;
+const cellSize = canvas.width / cols;
 
 // Estrutura do labirinto
 let grid = [];
 let stack = [];
 let current;
 let goal = { x: cols - 1, y: rows - 1 }; // Objetivo no centro
-let ball = { x: 0, y: 0, radius: 0, targetX: 0, targetY: 0, speed: 0.1 };
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth * 0.9;
-    canvas.height = window.innerHeight * 0.9;
-    cellSize = Math.min(canvas.width / cols, canvas.height / rows);
-    ball.radius = cellSize / 4;
-}
-window.addEventListener("resize", resizeCanvas);
-window.addEventListener("load", resizeCanvas);
-resizeCanvas();
+let ball = { x: 0, y: 0, radius: cellSize / 4 };
 
 // Direções possíveis
 const directions = [
@@ -56,7 +23,7 @@ const directions = [
     { x: -1, y: 0 }  // esquerda
 ];
 
-// Criar células do labirinto
+// Função para criar células do labirinto
 class Cell {
     constructor(x, y) {
         this.x = x;
@@ -67,7 +34,7 @@ class Cell {
     draw() {
         let x = this.x * cellSize;
         let y = this.y * cellSize;
-        ctx.strokeStyle = "white";
+        ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
 
         if (this.walls[0]) drawLine(x, y, x + cellSize, y); // Topo
@@ -87,7 +54,6 @@ function drawLine(x1, y1, x2, y2) {
 
 // Inicializar o labirinto
 function setupMaze() {
-    grid = [];
     for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
             grid.push(new Cell(x, y));
@@ -98,7 +64,7 @@ function setupMaze() {
     stack.push(current);
 }
 
-// Obter vizinhos não visitados
+// Função para obter vizinhos não visitados
 function getNeighbors(cell) {
     let neighbors = [];
     directions.forEach((dir, index) => {
@@ -129,9 +95,10 @@ function generateMaze() {
     }
 }
 
-// Desenhar o labirinto e a bolinha
+// Função para desenhar o labirinto e a bolinha
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
     grid.forEach(cell => cell.draw());
 
     // Desenhar objetivo
@@ -146,25 +113,16 @@ function draw() {
     ctx.arc(ball.x * cellSize + cellSize / 2, ball.y * cellSize + cellSize / 2, ball.radius, 0, Math.PI * 2);
     ctx.fill();
 }
-// Movimento da bolinha pelo teclado (Desktop)
+
+// Movimento da bolinha pelo teclado
 document.addEventListener("keydown", (event) => {
-    moveBall(event.key);
-});
-
-// Movimento por sensor (Mobile)
-if (window.DeviceMotionEvent) {
-    window.addEventListener("devicemotion", handleMotion);
-}
-
-// Lógica de movimento
-function moveBall(direction) {
     let newX = ball.x;
     let newY = ball.y;
 
-    if (direction === "ArrowUp" || direction === "up") newY--;
-    if (direction === "ArrowDown" || direction === "down") newY++;
-    if (direction === "ArrowLeft" || direction === "left") newX--;
-    if (direction === "ArrowRight" || direction === "right") newX++;
+    if (event.key === "ArrowUp") newY--;
+    if (event.key === "ArrowDown") newY++;
+    if (event.key === "ArrowLeft") newX--;
+    if (event.key === "ArrowRight") newX++;
 
     let currentCell = grid.find(c => c.x === ball.x && c.y === ball.y);
     let targetCell = grid.find(c => c.x === newX && c.y === newY);
@@ -174,52 +132,11 @@ function moveBall(direction) {
         ball.y = newY;
     }
 
-    checkGoal();
-}
-function checkGoal() {
-    let distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 0.1) + Math.pow(ball.y - goal.y, 0.1));
-    if (distanceToGoal < 0.1) {  
-        setTimeout(() => {
-            setupMaze(); 
-        }, 500);
-    }
-}
-// Controle por sensor de movimento (Mobile)
-function handleMotion(event) {
-    let accelerationX = event.accelerationIncludingGravity.x;
-    let accelerationY = event.accelerationIncludingGravity.y;
-    
-    let direction = { x: 0, y: 0 };
-    
-    if (accelerationY < -2) direction.y = -1;
-    if (accelerationY > 2) direction.y = 1;
-    if (accelerationX < -2) direction.x = 1;
-    if (accelerationX > 2) direction.x = -1;
-
-    moveBall(direction);
-}
-
-// Lógica para movimentação suave
-function moveBall(direction) {
-    let newX = ball.x + direction.x;
-    let newY = ball.y + direction.y;
-    
-    let currentCell = grid.find(c => c.x === Math.round(ball.x) && c.y === Math.round(ball.y));
-    let targetCell = grid.find(c => c.x === Math.round(newX) && c.y === Math.round(newY));
-
-    if (targetCell && !currentCell.walls[directions.findIndex(d => d.x === direction.x && d.y === direction.y)]) {
-        ball.vx += direction.x * ball.speed;
-        ball.vy += direction.y * ball.speed;
-    }
-
-    // Se atingir o objetivo
-    if (Math.round(ball.x) === goal.x && Math.round(ball.y) === goal.y) {
+    if (ball.x === goal.x && ball.y === goal.y) {
         alert("Você venceu!");
         location.reload();
     }
-}
-
-
+});
 
 // Loop principal
 function gameLoop() {
@@ -230,4 +147,4 @@ function gameLoop() {
 
 // Iniciar o jogo
 setupMaze();
-gameLoop();
+gameLoop(); 
