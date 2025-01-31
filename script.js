@@ -174,13 +174,16 @@ function moveBall(direction) {
         ball.y = newY;
     }
 
-     // Verificar se a bolinha está perto do objetivo (tolerância de 0.2 para o mobile)
-     let distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 2) + Math.pow(ball.y - goal.y, 2));
-     if (distanceToGoal < 0.2) {  // Tolerância para a proximidade
-         location.reload();  // Reiniciar o jogo
-     }
- }
-
+    checkGoal();
+}
+function checkGoal() {
+    let distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 2) + Math.pow(ball.y - goal.y, 2));
+    if (distanceToGoal < 0.2) {  
+        setTimeout(() => {
+            setupMaze(); 
+        }, 500);
+    }
+}
 // Controle por sensor de movimento (Mobile)
 function handleMotion(event) {
     let accelerationX = event.accelerationIncludingGravity.x;
