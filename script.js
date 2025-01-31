@@ -177,8 +177,8 @@ function moveBall(direction) {
     checkGoal();
 }
 function checkGoal() {
-    let distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 2) + Math.pow(ball.y - goal.y, 2));
-    if (distanceToGoal < 0.2) {  
+    let distanceToGoal = Math.sqrt(Math.pow(ball.x - goal.x, 1) + Math.pow(ball.y - goal.y, 1));
+    if (distanceToGoal < 0.1) {  
         setTimeout(() => {
             setupMaze(); 
         }, 500);
@@ -190,14 +190,13 @@ function handleMotion(event) {
     let accelerationY = event.accelerationIncludingGravity.y;
 
     if (Math.abs(accelerationX) > 0.1 || Math.abs(accelerationY) > 0.1) {
-        
-        if (accelerationY < -1) moveBall("up");
-        if (accelerationY > 1) moveBall("down");
-        if (accelerationX < -1) moveBall("right");
-        if (accelerationX > 1) moveBall("left");
+        if (accelerationY < -0.5) moveBall("up");
+        if (accelerationY > 0.5) moveBall("down");
+        if (accelerationX < -0.5) moveBall("right");
+        if (accelerationX > 0.5) moveBall("left");
     }
-    
 }
+
 
 // Loop principal
 function gameLoop() {
