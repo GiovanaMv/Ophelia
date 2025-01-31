@@ -159,21 +159,38 @@ function moveBall(direction) {
         ball.x = newX;
         ball.y = newY;
     }
+    // Verificar se a bolinha azul colidiu com a bolinha vermelha
     if (ball.x === goal.x && ball.y === goal.y) {
+        // Reinicia o labirinto e a posição da bolinha azul
         setupMaze();
+        ball.x = 0;
+        ball.y = 0; // Volta a bolinha azul para a posição inicial
     }
 }
 
 function handleMotion(event) {
-    let accelerationX = event.accelerationIncludingGravity.x;
-    let accelerationY = event.accelerationIncludingGravity.y;
-    if (Math.abs(accelerationX) > 0.1 || Math.abs(accelerationY) > 0.1) {
-        if (accelerationY < -1) moveBall("up");
-        if (accelerationY > 1) moveBall("down");
-        if (accelerationX < -1) moveBall("right");
-        if (accelerationX > 1) moveBall("left");
+    // Aqui você pode acessar as informações de aceleração do dispositivo
+    let acceleration = event.accelerationIncludingGravity;
+    let x = acceleration.x;
+    let y = acceleration.y;
+    let z = acceleration.z;
+
+    // Exemplo de como você pode mover a bola com base no movimento
+    if (Math.abs(x) > Math.abs(y)) {
+        if (x > 0) {
+            moveBall("ArrowRight");
+        } else {
+            moveBall("ArrowLeft");
+        }
+    } else {
+        if (y > 0) {
+            moveBall("ArrowDown");
+        } else {
+            moveBall("ArrowUp");
+        }
     }
 }
+
 
 function gameLoop() {
     generateMaze();
