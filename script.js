@@ -23,7 +23,7 @@ const directions = [
     { x: -1, y: 0 }  // esquerda
 ];
 
-// Função para criar células do labirinto
+// Criar células do labirinto
 class Cell {
     constructor(x, y) {
         this.x = x;
@@ -64,7 +64,7 @@ function setupMaze() {
     stack.push(current);
 }
 
-// Função para obter vizinhos não visitados
+// Obter vizinhos não visitados
 function getNeighbors(cell) {
     let neighbors = [];
     directions.forEach((dir, index) => {
@@ -95,7 +95,7 @@ function generateMaze() {
     }
 }
 
-// Função para desenhar o labirinto e a bolinha
+// Desenhar o labirinto e a bolinha
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -114,15 +114,25 @@ function draw() {
     ctx.fill();
 }
 
-// Movimento da bolinha pelo teclado
+// Movimento da bolinha pelo teclado (Desktop)
 document.addEventListener("keydown", (event) => {
+    moveBall(event.key);
+});
+
+// Movimento por sensor (Mobile)
+if (window.DeviceMotionEvent) {
+    window.addEventListener("devicemotion", handleMotion);
+}
+
+// Lógica de movimento
+function moveBall(direction) {
     let newX = ball.x;
     let newY = ball.y;
 
-    if (event.key === "ArrowUp") newY--;
-    if (event.key === "ArrowDown") newY++;
-    if (event.key === "ArrowLeft") newX--;
-    if (event.key === "ArrowRight") newX++;
+    if (direction === "ArrowUp" || direction === "up") newY--;
+    if (direction === "ArrowDown" || direction === "down") newY++;
+    if (direction === "ArrowLeft" || direction === "left") newX--;
+    if (direction === "ArrowRight" || direction === "right") newX++;
 
     let currentCell = grid.find(c => c.x === ball.x && c.y === ball.y);
     let targetCell = grid.find(c => c.x === newX && c.y === newY);
@@ -136,7 +146,20 @@ document.addEventListener("keydown", (event) => {
         alert("Você venceu!");
         location.reload();
     }
-});
+}
+
+// Controle por sensor de movimento (Mobile)
+function handleMotion(event) {
+    let accelerationX = event.accelerationIncludingGravity.x;
+    let accelerationY = event.accelerationIncludingGravity.y;
+
+    if (Math.abs(accelerationX) > 2 || Math.abs(accelerationY) > 2) {
+        if (accelerationY < -2) moveBall("up");
+        if (accelerationY > 2) moveBall("down");
+        if (accelerationX < -2) moveBall("left");
+        if (accelerationX > 2) moveBall("right");
+    }
+}
 
 // Loop principal
 function gameLoop() {
@@ -147,4 +170,4 @@ function gameLoop() {
 
 // Iniciar o jogo
 setupMaze();
-gameLoop(); 
+gameLoop();
