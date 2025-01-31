@@ -138,13 +138,32 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-// Loop principal
-function gameLoop() {
-    generateMaze();
-    draw();
-    requestAnimationFrame(gameLoop);
-}
+/// Função para capturar teclas de movimento
+function handleKeyPress(e) {
+    switch (e.key) {
+      case "ArrowUp":
+        moveBall(0, -1);
+        break;
+      case "ArrowDown":
+        moveBall(0, 1);
+        break;
+      case "ArrowLeft":
+        moveBall(-1, 0);
+        break;
+      case "ArrowRight":
+        moveBall(1, 0);
+        break;
+    }
+  }
 
-// Iniciar o jogo
-setupMaze();
-gameLoop();
+  // Função para atualizar o jogo
+  function updateGame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawMaze();
+    drawBall();
+  }
+
+  // Inicialização
+  window.addEventListener("keydown", handleKeyPress);
+  generateMaze();
+  setInterval(updateGame, 1000 / 30);  // 30 FPS
