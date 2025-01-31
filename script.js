@@ -188,14 +188,37 @@ function checkGoal() {
 function handleMotion(event) {
     let accelerationX = event.accelerationIncludingGravity.x;
     let accelerationY = event.accelerationIncludingGravity.y;
+    
+    let direction = { x: 0, y: 0 };
+    
+    if (accelerationY < -2) direction.y = -1;
+    if (accelerationY > 2) direction.y = 1;
+    if (accelerationX < -2) direction.x = 1;
+    if (accelerationX > 2) direction.x = -1;
 
-    if (Math.abs(accelerationX) > 0.1 || Math.abs(accelerationY) > 0.1) {
-        if (accelerationY < -0.1) moveBall("up");
-        if (accelerationY > 0.1) moveBall("down");
-        if (accelerationX < -0.1) moveBall("right");
-        if (accelerationX > 0.1) moveBall("left");
+    moveBall(direction);
+}
+
+// Lógica para movimentação suave
+function moveBall(direction) {
+    let newX = ball.x + direction.x;
+    let newY = ball.y + direction.y;
+    
+    let currentCell = grid.find(c => c.x === Math.round(ball.x) && c.y === Math.round(ball.y));
+    let targetCell = grid.find(c => c.x === Math.round(newX) && c.y === Math.round(newY));
+
+    if (targetCell && !currentCell.walls[directions.findIndex(d => d.x === direction.x && d.y === direction.y)]) {
+        ball.vx += direction.x * ball.speed;
+        ball.vy += direction.y * ball.speed;
+    }
+
+    // Se atingir o objetivo
+    if (Math.round(ball.x) === goal.x && Math.round(ball.y) === goal.y) {
+        alert("Você venceu!");
+        location.reload();
     }
 }
+
 
 
 // Loop principal
