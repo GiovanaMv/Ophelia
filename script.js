@@ -151,8 +151,8 @@ function moveBall(direction) {
     let newY = ball.y;
     if (direction === "ArrowUp" || direction === "up") newY--;
     if (direction === "ArrowDown" || direction === "down") newY++;
-    if (direction === "ArrowLeft" || direction === "right") newX--;
-    if (direction === "ArrowRight" || direction === "left") newX++;
+    if (direction === "ArrowLeft" || direction === "left") newX--;
+    if (direction === "ArrowRight" || direction === "right") newX++;
     let currentCell = grid.find(c => c.x === ball.x && c.y === ball.y);
     let targetCell = grid.find(c => c.x === newX && c.y === newY);
     if (targetCell && !currentCell.walls[directions.findIndex(d => d.x === (newX - ball.x) && d.y === (newY - ball.y))]) {
@@ -178,9 +178,9 @@ function handleMotion(event) {
     // Exemplo de como você pode mover a bola com base no movimento
     if (Math.abs(x) > Math.abs(y)) {
         if (x > 0) {
-            moveBall("ArrowRight");
-        } else {
             moveBall("ArrowLeft");
+        } else {
+            moveBall("ArrowRight");
         }
     } else {
         if (y > 0) {
